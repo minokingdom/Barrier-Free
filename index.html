@@ -9,7 +9,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap');
-        body { font-family: 'Pretendard', sans-serif; }
+        body { 
+            font-family: 'Pretendard', sans-serif; 
+            word-break: keep-all; /* 어휘 단위 줄바꿈 전역 설정 */
+            overflow-wrap: break-word;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 <script type="importmap">
 {
@@ -23,6 +29,5 @@
 </head>
 <body class="bg-slate-50 text-slate-900">
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
 </body>
 </html>

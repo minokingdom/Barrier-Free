@@ -57,17 +57,14 @@ const App: React.FC = () => {
       if (document.body) document.body.scrollTop = 0;
     };
 
-    // 1. 즉시 실행
     forceScrollTop();
 
-    // 2. 브라우저가 화면을 그리는 다음 프레임에서도 다시 한번 강제 실행 (자동 스크롤 방지)
     const rafId1 = requestAnimationFrame(() => {
       forceScrollTop();
       const rafId2 = requestAnimationFrame(forceScrollTop);
       return () => cancelAnimationFrame(rafId2);
     });
 
-    // 3. 네비게이션 가로 스크롤 중앙 정렬 (수직 스크롤 간섭 없음)
     if (navRef.current) {
       const activeBtn = navRef.current.querySelector(`[data-tab-id="${activeTab}"]`) as HTMLElement;
       if (activeBtn) {
@@ -82,12 +79,31 @@ const App: React.FC = () => {
   }, [activeTab, isStarted]);
 
   useEffect(() => {
-    localStorage.setItem('smst_checklist', JSON.stringify(checklist));
-  }, [checklist]);
+    if (isStarted) {
+      localStorage.setItem('smst_checklist', JSON.stringify(checklist));
+    }
+  }, [checklist, isStarted]);
 
   useEffect(() => {
-    localStorage.setItem('smst_records', JSON.stringify(records));
-  }, [records]);
+    if (isStarted) {
+      localStorage.setItem('smst_records', JSON.stringify(records));
+    }
+  }, [records, isStarted]);
+
+  const handleStartApp = () => {
+    // 1. 모든 상태 초기화
+    setChecklist(INITIAL_CHECKLIST.map(item => ({ ...item, completed: false })));
+    setRecords([]);
+    setFormData(INITIAL_FORM_DATA);
+    
+    // 2. 로컬 스토리지 데이터 삭제
+    localStorage.removeItem('smst_checklist');
+    localStorage.removeItem('smst_records');
+    
+    // 3. 앱 시작 및 첫 탭으로 이동
+    setActiveTab(AppTab.CHECKLIST);
+    setIsStarted(true);
+  };
 
   const toggleCheck = (id: string) => {
     setChecklist(prev => prev.map(item => 
@@ -129,7 +145,7 @@ const App: React.FC = () => {
   const isChecklistComplete = checklist.every(item => item.completed);
 
   if (!isStarted) {
-    return <LandingView onStart={() => setIsStarted(true)} />;
+    return <LandingView onStart={handleStartApp} />;
   }
 
   return (
