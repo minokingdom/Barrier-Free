@@ -9,12 +9,14 @@ interface ApplicationEntryViewProps {
   formData: any;
   setFormData: React.Dispatch<React.SetStateAction<any>>;
   onSubmit: (data: any) => Promise<void>;
+  onNextStep: () => void;
 }
 
-const ApplicationEntryView: React.FC<ApplicationEntryViewProps> = ({ isComplete, formData, setFormData, onSubmit }) => {
+const ApplicationEntryView: React.FC<ApplicationEntryViewProps> = ({ isComplete, formData, setFormData, onSubmit, onNextStep }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,12 +25,21 @@ const ApplicationEntryView: React.FC<ApplicationEntryViewProps> = ({ isComplete,
     try {
       await onSubmit(formData);
       setModalMessage('정상적으로 기록되었습니다.');
+      setIsSuccess(true);
       setModalOpen(true);
     } catch (err) {
       setModalMessage('저장 중 오류가 발생했습니다.');
+      setIsSuccess(false);
       setModalOpen(true);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    if (isSuccess) {
+      onNextStep();
     }
   };
 
@@ -61,9 +72,10 @@ const ApplicationEntryView: React.FC<ApplicationEntryViewProps> = ({ isComplete,
     <>
       <CustomModal
         isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={handleModalClose}
         message={modalMessage}
-        title={modalMessage.includes('오류') ? '오류 발생' : '저장 완료'}
+        title={isSuccess ? '저장 완료' : '오류 발생'}
+        buttonText={isSuccess ? '다음 단계로' : '확인'}
       />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-6 duration-700 items-start">
         {/* 왼쪽: 공식 사이트 카드 (sticky 제거) */}
@@ -135,7 +147,6 @@ const ApplicationEntryView: React.FC<ApplicationEntryViewProps> = ({ isComplete,
                 type="submit"
                 disabled={isSubmitting}
                 className={`${buttonBaseClasses} ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
-                onClick={playClickSound}
               >
                 {isSubmitting ? (
                   <i className="fa-solid fa-circle-notch fa-spin"></i>

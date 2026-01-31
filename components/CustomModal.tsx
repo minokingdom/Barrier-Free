@@ -6,9 +6,10 @@ interface CustomModalProps {
     onClose: () => void;
     title?: string;
     message: string;
+    buttonText?: string;
 }
 
-const CustomModal: React.FC<CustomModalProps> = ({ isOpen, onClose, title, message }) => {
+const CustomModal: React.FC<CustomModalProps> = ({ isOpen, onClose, title, message, buttonText = "확인" }) => {
     if (!isOpen) return null;
 
     return (
@@ -37,7 +38,7 @@ const CustomModal: React.FC<CustomModalProps> = ({ isOpen, onClose, title, messa
                     }}
                     className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold transition-all shadow-lg shadow-blue-200 active:scale-95"
                 >
-                    확인
+                    {buttonText}
                 </button>
             </div>
         </div>

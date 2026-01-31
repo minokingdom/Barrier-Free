@@ -8,7 +8,7 @@ import HistoryView from './components/HistoryView';
 import GuideView from './components/GuideView';
 import LandingView from './components/LandingView';
 
-const FIXED_SHEET_URL = 'https://script.google.com/macros/s/AKfycbw8ptxTABIRchaCJOostJKPmkmTY5nTL60U9EKkKqSS0GVLh6WqGaXBp3L-NHO9mRc/exec';
+const FIXED_SHEET_URL = 'https://script.google.com/macros/s/AKfycbz0wj6dRk4kChpCGXUx5srSNOPXQfnlNSmQMyfa4IPLB0niCHVp_JzYAoRVzJZfR_kR/exec';
 
 const INITIAL_FORM_DATA = {
   branchName: '',
@@ -130,15 +130,19 @@ const App: React.FC = () => {
       await fetch(FIXED_SHEET_URL, {
         method: 'POST',
         mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'text/plain', // GAS와의 호환성을 위해 text/plain 사용
+        },
         body: JSON.stringify({ ...recordData, date: timestamp })
       });
+      console.log('Sheet upload request sent');
     } catch (err) {
       console.error("Sheet Sync Error:", err);
     } finally {
       setTimeout(() => { isSubmittingRef.current = false; }, 1500);
     }
 
+    // 로컬 저장은 항상 수행 (서버 실패시에도 로컬엔 남김)
     setRecords(prev => [...prev, newRecord]);
   };
 
@@ -219,6 +223,7 @@ const App: React.FC = () => {
                 await addRecord(data);
                 setFormData({ ...INITIAL_FORM_DATA });
               }}
+              onNextStep={() => setActiveTab(AppTab.HISTORY)}
             />
           )}
           {activeTab === AppTab.HISTORY && (
