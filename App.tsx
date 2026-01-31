@@ -24,17 +24,17 @@ const INITIAL_FORM_DATA = {
 
 const App: React.FC = () => {
   const [isStarted, setIsStarted] = useState(false);
-  const [activeTab, setActiveTab] = useState<AppTab>(AppTab.CHECKLIST);
+  const [activeTab, setActiveTab] = useState<AppTab>(AppTab.GUIDE);
   const isSubmittingRef = useRef(false);
   const navRef = useRef<HTMLDivElement>(null);
-  
+
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
 
   const [checklist, setChecklist] = useState<ChecklistItem[]>(() => {
     const saved = localStorage.getItem('smst_checklist');
     return saved ? JSON.parse(saved) : INITIAL_CHECKLIST.map(item => ({ ...item }));
   });
-  
+
   const [records, setRecords] = useState<ApplicationRecord[]>(() => {
     const saved = localStorage.getItem('smst_records');
     return saved ? JSON.parse(saved) : [];
@@ -95,18 +95,18 @@ const App: React.FC = () => {
     setChecklist(INITIAL_CHECKLIST.map(item => ({ ...item, completed: false })));
     setRecords([]);
     setFormData(INITIAL_FORM_DATA);
-    
+
     // 2. 로컬 스토리지 데이터 삭제
     localStorage.removeItem('smst_checklist');
     localStorage.removeItem('smst_records');
-    
+
     // 3. 앱 시작 및 첫 탭으로 이동
-    setActiveTab(AppTab.CHECKLIST);
+    setActiveTab(AppTab.GUIDE);
     setIsStarted(true);
   };
 
   const toggleCheck = (id: string) => {
-    setChecklist(prev => prev.map(item => 
+    setChecklist(prev => prev.map(item =>
       item.id === id ? { ...item, completed: !item.completed } : item
     ));
   };
@@ -154,7 +154,7 @@ const App: React.FC = () => {
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-4 cursor-pointer group" onClick={() => setIsStarted(false)}>
             <div className="bg-white p-2.5 rounded-xl shadow-lg transform group-hover:scale-110 transition-transform">
-                <i className="fa-solid fa-file-invoice text-blue-700 text-xl"></i>
+              <i className="fa-solid fa-file-invoice text-blue-700 text-xl"></i>
             </div>
             <div>
               <h1 className="text-xl md:text-2xl font-black tracking-tight">스마트상점 신청 도우미</h1>
@@ -168,25 +168,30 @@ const App: React.FC = () => {
       </header>
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 lg:p-12">
-        <nav 
+        <nav
           ref={navRef}
           className="flex bg-white rounded-2xl shadow-sm mb-8 md:mb-12 overflow-x-auto border border-slate-200 p-1.5 no-scrollbar scroll-smooth"
         >
           {[
-            { id: AppTab.CHECKLIST, step: 'Step 1', label: '준비물', icon: 'fa-list-check' },
-            { id: AppTab.APPLY, step: 'Step 2', label: '신청/입력', icon: 'fa-paper-plane' },
-            { id: AppTab.HISTORY, step: 'Step 3', label: '신청현황', icon: 'fa-table' },
-            { id: AppTab.GUIDE, step: 'Final', label: '유의사항', icon: 'fa-circle-exclamation', color: 'red' }
+            { id: AppTab.GUIDE, step: 'Step 1', label: '유의사항', icon: 'fa-circle-exclamation', color: 'red' },
+            { id: AppTab.CHECKLIST, step: 'Step 2', label: '준비물', icon: 'fa-list-check' },
+            { id: AppTab.APPLY, step: 'Step 3', label: '신청/입력', icon: 'fa-paper-plane' },
+            { id: AppTab.HISTORY, step: 'Final', label: '신청현황', icon: 'fa-table' }
           ].map((tab) => (
             <button
               key={tab.id}
               data-tab-id={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 min-w-[120px] py-4 md:py-5 px-4 text-center rounded-xl transition-all duration-300 ${
-                activeTab === tab.id 
-                ? `${tab.color === 'red' ? 'bg-red-600' : 'bg-blue-700'} text-white shadow-2xl font-black scale-[1.02]` 
+              onClick={() => {
+                if (tab.id === AppTab.GUIDE) {
+                  handleStartApp();
+                } else {
+                  setActiveTab(tab.id);
+                }
+              }}
+              className={`flex-1 min-w-[120px] py-4 md:py-5 px-4 text-center rounded-xl transition-all duration-300 ${activeTab === tab.id
+                ? `${tab.color === 'red' ? 'bg-red-600' : 'bg-blue-700'} text-white shadow-2xl font-black scale-[1.02]`
                 : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50 font-bold'
-              }`}
+                }`}
             >
               <div className="text-[10px] mb-1 opacity-60 font-black uppercase tracking-widest">{tab.step}</div>
               <div className="text-sm md:text-lg flex items-center justify-center gap-2 whitespace-nowrap">
@@ -198,11 +203,14 @@ const App: React.FC = () => {
         </nav>
 
         <div className="min-h-[600px] animate-in fade-in duration-300">
+          {activeTab === AppTab.GUIDE && (
+            <GuideView key="guide-view" onNext={() => setActiveTab(AppTab.CHECKLIST)} />
+          )}
           {activeTab === AppTab.CHECKLIST && (
             <ChecklistView key="checklist-view" items={checklist} onToggle={toggleCheck} onNext={() => setActiveTab(AppTab.APPLY)} />
           )}
           {activeTab === AppTab.APPLY && (
-            <ApplicationEntryView 
+            <ApplicationEntryView
               key="apply-view"
               isComplete={isChecklistComplete}
               formData={formData}
@@ -210,16 +218,11 @@ const App: React.FC = () => {
               onSubmit={async (data) => {
                 await addRecord(data);
                 setFormData({ ...INITIAL_FORM_DATA });
-                alert('정상적으로 기록되었습니다.');
-                setActiveTab(AppTab.HISTORY);
-              }} 
+              }}
             />
           )}
           {activeTab === AppTab.HISTORY && (
             <HistoryView key="history-view" records={records} />
-          )}
-          {activeTab === AppTab.GUIDE && (
-            <GuideView key="guide-view" />
           )}
         </div>
       </main>

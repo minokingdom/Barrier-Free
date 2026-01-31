@@ -1,8 +1,13 @@
 
 import React from 'react';
 import { POST_SELECTION_GUIDE } from '../constants';
+import { playClickSound } from '../utils/sound';
 
-const GuideView: React.FC = () => {
+interface GuideViewProps {
+  onNext?: () => void;
+}
+
+const GuideView: React.FC<GuideViewProps> = ({ onNext }) => {
   return (
     <div className="max-w-3xl mx-auto space-y-12 animate-in fade-in duration-500 pb-20">
       {/* 핵심 경고 섹션 - 더 깔끔하게 정리 */}
@@ -43,11 +48,13 @@ const GuideView: React.FC = () => {
                 </div>
                 <p className="text-base font-bold text-slate-700">{tip.q}</p>
               </div>
-              
+
               {/* Answer Box */}
-              <div className="flex gap-4 pl-1">
-                <span className="text-red-500 font-black text-sm mt-3 shrink-0">A</span>
-                <div className="w-full bg-slate-50/80 border border-slate-100/50 rounded-2xl px-6 py-4 transition-colors hover:bg-slate-50">
+              <div className="flex gap-4 pl-1 items-stretch">
+                <div className="flex flex-col justify-center shrink-0 w-6">
+                  <span className="text-red-500 font-black text-sm text-center">A</span>
+                </div>
+                <div className="w-full bg-slate-50/80 border border-slate-100/50 rounded-2xl px-6 py-4 transition-colors hover:bg-slate-50 flex items-center">
                   <p className="text-base font-bold text-red-600 leading-relaxed">
                     {tip.a}
                   </p>
@@ -89,6 +96,24 @@ const GuideView: React.FC = () => {
           </p>
         </div>
       </div>
+
+      {onNext && (
+        <div className="flex justify-center pt-8">
+          <button
+            onClick={() => {
+              playClickSound();
+              if (onNext) onNext();
+            }}
+            className="group relative inline-flex items-center justify-center px-10 py-5 font-black text-white transition-all duration-300 bg-blue-600 rounded-[2rem] hover:bg-blue-700 hover:shadow-xl hover:-translate-y-1 overflow-hidden"
+          >
+            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:animate-[shimmer_1.5s_infinite]"></div>
+            <span className="relative flex items-center gap-3 text-lg">
+              준비물 확인하러 가기
+              <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+            </span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
