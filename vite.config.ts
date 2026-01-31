@@ -19,15 +19,16 @@ export default defineConfig(({ mode }) => {
           name: '신청도우미',
           short_name: '신청도우미',
           description: '스마트상점 신청 지원 시스템',
-          theme_color: '#ffffff',
+          theme_color: '#000000',
           icons: [
             {
               src: 'pwa-icon.png',
               sizes: '1024x1024',
-              type: 'image/png'
+              type: 'image/png',
+              purpose: 'any maskable'
             }
           ],
-          background_color: '#ffffff',
+          background_color: '#000000',
           display: 'standalone'
         }
       })
