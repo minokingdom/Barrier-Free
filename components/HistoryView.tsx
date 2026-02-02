@@ -233,7 +233,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({
           <thead>
             <tr className="bg-slate-50 border-b border-slate-200 text-sm font-black text-slate-500 uppercase tracking-widest">
               <th className="px-6 py-4">지부 / 담당자</th>
-              <th className="px-6 py-4">지부 연락처</th>
+              <th className="px-6 py-4">담당자 연락처</th>
               <th className="px-6 py-4 bg-blue-50/50 text-blue-700">신청 상호 / 대표자</th>
               <th className="px-6 py-4">상점 연락처</th>
               <th className="px-6 py-4">상점 주소</th>

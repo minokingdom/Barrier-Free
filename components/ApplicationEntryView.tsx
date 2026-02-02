@@ -239,10 +239,10 @@ const ApplicationEntryView: React.FC<ApplicationEntryViewProps> = ({ isComplete,
                           required
                           value={formData.branchName}
                           onChange={handleInputChange}
-                          className={`${inputClasses} appearance-none cursor-pointer ${formData.branchName ? 'text-white' : 'text-slate-500'
+                          className={`${inputClasses} appearance-none cursor-pointer ${formData.branchName ? 'text-white' : 'text-[#64748b]'
                             }`}
                         >
-                          <option value="" disabled>지부 선택</option>
+                          <option value="" disabled className="text-slate-400">지부 선택</option>
                           {availableBranches.map(branch => (
                             <option key={branch} value={branch} className="text-white bg-[#2a2a2a]">{branch}</option>
                           ))}
