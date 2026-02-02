@@ -9,9 +9,11 @@ export interface ChecklistItem {
 export interface ApplicationRecord {
   id: string;
   // index 삭제 (사용자가 시트 수식으로 관리)
-  branchName: string;   // 지부
-  branchRep: string;    // 대표
-  branchPhone: string;  // 연락처
+  branchName: string;   // 지부 (영업자 정보)
+  branchRep: string;    // 영업자 성함 (formerly branchRep)
+  salesPassword: string; // 영업자 비밀번호 (NEW)
+  branchPhone: string;  // 연락처 (Keep for now as per sheet cols?)
+
   businessName: string; // 상호
   repName: string;      // 대표이름
   phoneNumber: string;  // 전화번호

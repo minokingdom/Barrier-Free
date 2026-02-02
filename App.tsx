@@ -8,11 +8,12 @@ import HistoryView from './components/HistoryView';
 import GuideView from './components/GuideView';
 import LandingView from './components/LandingView';
 
-const FIXED_SHEET_URL = 'https://script.google.com/macros/s/AKfycbz0wj6dRk4kChpCGXUx5srSNOPXQfnlNSmQMyfa4IPLB0niCHVp_JzYAoRVzJZfR_kR/exec';
+const FIXED_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzQjGaHGCfFx445WtlSSn3DGB-zErQFr85ZkrnKF4XY6rxARWuhCMO5M9cGG4D05Zo/exec';
 
 const INITIAL_FORM_DATA = {
   branchName: '',
   branchRep: '',
+  salesPassword: '',
   branchPhone: '',
   businessName: '',
   repName: '',
@@ -96,9 +97,12 @@ const App: React.FC = () => {
     setRecords([]);
     setFormData(INITIAL_FORM_DATA);
 
-    // 2. 로컬 스토리지 데이터 삭제
+    // 2. 로컬 스토리지 데이터 삭제 (인증 정보 포함)
     localStorage.removeItem('smst_checklist');
     localStorage.removeItem('smst_records');
+    localStorage.removeItem('last_branch');
+    localStorage.removeItem('last_name');
+    localStorage.removeItem('last_phone');
 
     // 3. 앱 시작 및 첫 탭으로 이동
     setActiveTab(AppTab.GUIDE);
@@ -111,7 +115,7 @@ const App: React.FC = () => {
     ));
   };
 
-  const addRecord = async (recordData: typeof INITIAL_FORM_DATA): Promise<void> => {
+  const addRecord = async (recordData: typeof INITIAL_FORM_DATA, isNew: boolean = false): Promise<void> => {
     if (isSubmittingRef.current) return;
     isSubmittingRef.current = true;
 
@@ -133,9 +137,15 @@ const App: React.FC = () => {
         headers: {
           'Content-Type': 'text/plain', // GAS와의 호환성을 위해 text/plain 사용
         },
-        body: JSON.stringify({ ...recordData, date: timestamp })
+        body: JSON.stringify({ ...recordData, date: timestamp, isNewSalesperson: isNew })
       });
       console.log('Sheet upload request sent');
+
+      // Refresh server data after a short delay to allow GAS to process
+      setTimeout(() => {
+        fetchGASData();
+      }, 2000);
+
     } catch (err) {
       console.error("Sheet Sync Error:", err);
     } finally {
@@ -144,6 +154,65 @@ const App: React.FC = () => {
 
     // 로컬 저장은 항상 수행 (서버 실패시에도 로컬엔 남김)
     setRecords(prev => [...prev, newRecord]);
+
+    // Save Identity for History View
+    localStorage.setItem('last_branch', recordData.branchName);
+    localStorage.setItem('last_name', recordData.branchRep);
+    localStorage.setItem('last_phone', recordData.branchPhone);
+  };
+
+  const [availableBranches, setAvailableBranches] = useState<string[]>([]);
+  const [salespersons, setSalespersons] = useState<any[]>([]); // Store full salesperson data
+  const [history, setHistory] = useState<ApplicationRecord[]>([]); // Full history from GAS
+  const [branchAuth, setBranchAuth] = useState<{ branchName: string, password: string }[]>([]); // Branch Access Info
+
+  const fetchGASData = async () => {
+    try {
+      const response = await fetch(FIXED_SHEET_URL);
+      const data = await response.json();
+      if (data) {
+        if (data.branches) setAvailableBranches(data.branches);
+        if (data.salespersons) setSalespersons(data.salespersons);
+        if (data.history) setHistory(data.history);
+        if (data.branchAuth) setBranchAuth(data.branchAuth);
+      }
+    } catch (error) {
+      console.error("Failed to fetch GAS data:", error);
+    }
+  };
+
+  // Fetch data on initial load AND when switching to History tab
+  useEffect(() => {
+    fetchGASData();
+  }, []);
+
+  // Refetch when user navigates to History tab
+  useEffect(() => {
+    if (activeTab === AppTab.HISTORY) {
+      fetchGASData();
+    }
+  }, [activeTab]);
+
+  const handleRegisterBranchPassword = async (branchName: string, password: string) => {
+    try {
+      await fetch(FIXED_SHEET_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+        body: JSON.stringify({
+          type: 'registerBranchPassword',
+          branchName,
+          password
+        })
+      });
+      console.log('Branch password registration request sent');
+      // Refresh data after registration (with delay for propagation)
+      setTimeout(fetchGASData, 2000);
+    } catch (err) {
+      console.error("Branch PW Reg Error:", err);
+    }
   };
 
   const isChecklistComplete = checklist.every(item => item.completed);
@@ -219,15 +288,29 @@ const App: React.FC = () => {
               isComplete={isChecklistComplete}
               formData={formData}
               setFormData={setFormData}
-              onSubmit={async (data) => {
-                await addRecord(data);
+              availableBranches={availableBranches}
+              salespersons={salespersons}
+              onSubmit={async (data, isNew) => {
+                await addRecord(data, isNew);
                 setFormData({ ...INITIAL_FORM_DATA });
               }}
               onNextStep={() => setActiveTab(AppTab.HISTORY)}
             />
           )}
           {activeTab === AppTab.HISTORY && (
-            <HistoryView key="history-view" records={records} />
+            <HistoryView
+              key="history-view"
+              localRecords={records}
+              fullHistory={history}
+              branchAuth={branchAuth}
+              availableBranches={availableBranches}
+              currentUser={{
+                branchName: formData.branchName || localStorage.getItem('last_branch') || '',
+                name: formData.branchRep || localStorage.getItem('last_name') || '',
+                phone: formData.branchPhone || localStorage.getItem('last_phone') || ''
+              }}
+              onRegisterPassword={handleRegisterBranchPassword}
+            />
           )}
         </div>
       </main>

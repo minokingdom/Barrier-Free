@@ -5,11 +5,13 @@ interface CustomModalProps {
     isOpen: boolean;
     onClose: () => void;
     title?: string;
-    message: string;
+    message: React.ReactNode;
     buttonText?: string;
+    onCancel?: () => void;
+    cancelText?: string;
 }
 
-const CustomModal: React.FC<CustomModalProps> = ({ isOpen, onClose, title, message, buttonText = "확인" }) => {
+const CustomModal: React.FC<CustomModalProps> = ({ isOpen, onClose, title, message, buttonText = "확인", onCancel, cancelText }) => {
     if (!isOpen) return null;
 
     return (
@@ -27,19 +29,34 @@ const CustomModal: React.FC<CustomModalProps> = ({ isOpen, onClose, title, messa
                 </div>
 
                 {title && <h3 className="text-xl font-black text-slate-800 mb-2">{title}</h3>}
-                <p className="text-slate-500 font-medium mb-8 leading-relaxed">
+                <div className="text-slate-500 font-medium mb-8 leading-relaxed whitespace-pre-wrap">
                     {message}
-                </p>
+                </div>
 
-                <button
-                    onClick={() => {
-                        playClickSound();
-                        onClose();
-                    }}
-                    className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold transition-all shadow-lg shadow-blue-200 active:scale-95"
-                >
-                    {buttonText}
-                </button>
+                <div className="flex gap-3">
+                    {/* Optional Cancel Button */}
+                    {onClose && onCancel && (
+                        <button
+                            onClick={() => {
+                                playClickSound();
+                                onCancel();
+                            }}
+                            className="flex-1 py-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-bold transition-all active:scale-95"
+                        >
+                            {cancelText || '취소'}
+                        </button>
+                    )}
+
+                    <button
+                        onClick={() => {
+                            playClickSound();
+                            onClose();
+                        }}
+                        className={`flex-1 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold transition-all shadow-lg shadow-blue-200 active:scale-95 ${!onCancel ? 'w-full' : ''}`}
+                    >
+                        {buttonText}
+                    </button>
+                </div>
             </div>
         </div>
     );
