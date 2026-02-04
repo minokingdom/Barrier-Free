@@ -26,6 +26,9 @@ const ApplicationEntryView: React.FC<ApplicationEntryViewProps> = ({ isComplete,
   // Confirmation Modal
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
 
+  // Password Visibility
+  const [showPassword, setShowPassword] = useState(false);
+
   // Verification Status
   const [verificationStatus, setVerificationStatus] = useState<'verified' | 'new_confirmed' | null>(null);
 
@@ -286,19 +289,28 @@ const ApplicationEntryView: React.FC<ApplicationEntryViewProps> = ({ isComplete,
                     </div>
                     <div>
                       <label className={labelClasses}>비밀번호</label>
-                      <input
-                        name="salesPassword"
-                        type="password"
-                        placeholder="비밀번호"
-                        required
-                        value={formData.salesPassword}
-                        onChange={handleInputChange}
-                        className={inputClasses}
-                        autoComplete="new-password"
-                        data-lpignore="true"
-                        readOnly
-                        onFocus={(e) => e.target.readOnly = false}
-                      />
+                      <div className="relative">
+                        <input
+                          name="salesPassword"
+                          type={showPassword ? "text" : "password"}
+                          placeholder="비밀번호"
+                          required
+                          value={formData.salesPassword}
+                          onChange={handleInputChange}
+                          className={`${inputClasses} pr-12`}
+                          autoComplete="new-password"
+                          data-lpignore="true"
+                          readOnly
+                          onFocus={(e) => e.target.readOnly = false}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                        >
+                          <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                        </button>
+                      </div>
 
                       {/* Verification Status Indicator */}
                       {verificationStatus === 'verified' && (
