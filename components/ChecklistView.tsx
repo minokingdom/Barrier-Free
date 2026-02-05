@@ -72,7 +72,7 @@ const ChecklistView: React.FC<ChecklistViewProps> = ({ items, onToggle, onNext }
             onClick={playClickSound}
             className="w-full py-6 rounded-2xl font-black text-xl transition-all bg-blue-700 text-white shadow-2xl shadow-blue-700/30 hover:bg-blue-800 hover:-translate-y-1 flex items-center justify-center gap-3"
           >
-            <span>스마트상점 공식 신청 사이트 바로가기</span>
+            <span>스마트상점 신청하기</span>
             <i className="fa-solid fa-arrow-up-right-from-square"></i>
           </a>
 

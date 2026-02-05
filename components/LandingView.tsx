@@ -53,7 +53,6 @@ const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
             <span className="text-2xl font-black text-blue-100">『 영업자용 』</span>
             <span className="flex items-center gap-3 opacity-90 text-lg">
               스마트상점 신청하기
-              <i className="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
             </span>
           </span>
         </button>
