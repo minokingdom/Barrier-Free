@@ -20,7 +20,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
 
         <h1 className="text-5xl md:text-7xl font-black text-white mb-8 tracking-tighter leading-[1.1]">
           스마트상점<br />
-          <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">신청 지원 시스템</span>
+          <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">신청 지원 시스템(영업자용)</span>
         </h1>
 
         <p className="text-slate-400 text-lg md:text-2xl mb-14 font-medium leading-relaxed max-w-xl mx-auto">
@@ -50,7 +50,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
           className="group relative inline-flex items-center justify-center px-16 py-7 font-black text-white bg-blue-600 rounded-3xl overflow-hidden transition-all hover:bg-blue-500 hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(37,99,235,0.4)]"
         >
           <span className="relative flex items-center gap-4 text-xl uppercase tracking-[0.1em]">
-            업무 시작하기
+            스마트상점 신청하기
             <i className="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
           </span>
         </button>

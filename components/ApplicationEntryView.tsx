@@ -199,28 +199,9 @@ const ApplicationEntryView: React.FC<ApplicationEntryViewProps> = ({ isComplete,
         cancelText="아니오 (수정)"
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-6 duration-700 items-start">
-        {/* 왼쪽: 공식 사이트 카드 (sticky 제거) */}
-        <div className="lg:col-span-1">
-          <div className={cardClasses}>
-            <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full mb-4 inline-block uppercase tracking-wider">Official Link</span>
-            <h2 className="text-2xl font-black text-slate-800 mb-4 leading-tight">스마트상점<br />공식 신청 사이트</h2>
-            <p className="text-slate-500 mb-8 text-sm leading-relaxed">사이트 신청 완료 후 발급 정보를 입력해 주세요.</p>
-            <a
-              href={OFFICIAL_SITE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={buttonBaseClasses}
-              onClick={playClickSound}
-            >
-              <span>사이트 바로가기</span>
-              <i className="fa-solid fa-arrow-up-right-from-square ml-3"></i>
-            </a>
-          </div>
-        </div>
-
+      <div className="max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-6 duration-700">
         {/* 오른쪽: 분리된 세션 폼 */}
-        <div className="lg:col-span-2">
+        <div>
           <form onSubmit={handleSubmit} className="space-y-8" autoComplete="off">
             {/* Hidden inputs to trick browser autofill */}
             <input type="text" readOnly style={{ position: 'absolute', opacity: 0, height: 0, width: 0, zIndex: -1 }} />

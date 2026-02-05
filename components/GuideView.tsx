@@ -108,7 +108,7 @@ const GuideView: React.FC<GuideViewProps> = ({ onNext }) => {
           >
             <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:animate-[shimmer_1.5s_infinite]"></div>
             <span className="relative flex items-center gap-3 text-lg">
-              준비물 확인하러 가기
+              준비 및 신청하러 가기
               <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
             </span>
           </button>

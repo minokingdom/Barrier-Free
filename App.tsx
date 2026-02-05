@@ -215,7 +215,7 @@ const App: React.FC = () => {
     }
   };
 
-  const isChecklistComplete = checklist.every(item => item.completed);
+  const isChecklistComplete = true; // Checklist is now informational only
 
   if (!isStarted) {
     return <LandingView onStart={handleStartApp} />;
@@ -230,7 +230,7 @@ const App: React.FC = () => {
               <i className="fa-solid fa-file-invoice text-blue-700 text-xl"></i>
             </div>
             <div>
-              <h1 className="text-xl md:text-2xl font-black tracking-tight">스마트상점 신청 도우미</h1>
+              <h1 className="text-xl md:text-2xl font-black tracking-tight">스마트상점 신청 도우미(영업자용)</h1>
               <p className="text-blue-200 text-[10px] font-bold uppercase tracking-widest opacity-70">Application Assistant</p>
             </div>
           </div>
@@ -247,7 +247,7 @@ const App: React.FC = () => {
         >
           {[
             { id: AppTab.GUIDE, step: 'Step 1', label: '유의사항', icon: 'fa-circle-exclamation', color: 'red' },
-            { id: AppTab.CHECKLIST, step: 'Step 2', label: '준비물', icon: 'fa-list-check' },
+            { id: AppTab.CHECKLIST, step: 'Step 2', label: '준비물 및 신청', icon: 'fa-list-check' },
             { id: AppTab.APPLY, step: 'Step 3', label: '신청/입력', icon: 'fa-paper-plane' },
             { id: AppTab.HISTORY, step: 'Final', label: '신청현황', icon: 'fa-table' }
           ].map((tab) => (

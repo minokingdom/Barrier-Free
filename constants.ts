@@ -2,35 +2,35 @@
 import { ChecklistItem } from './types';
 
 export const INITIAL_CHECKLIST: ChecklistItem[] = [
-  { 
-    id: '1', 
-    task: '소상공인확인서 발급', 
-    description: '중소기업현황정보시스템(sminfo.mss.go.kr)에서 발급', 
-    completed: false 
+  {
+    id: '1',
+    task: '소상공인확인서 발급',
+    description: '중소기업현황정보시스템(sminfo.mss.go.kr)에서 발급',
+    completed: false,
   },
-  { 
-    id: '2', 
-    task: '납세증명서류 준비', 
-    description: '국세 및 지방세 완납증명서 (필요시 개별 요청)', 
-    completed: false 
+  {
+    id: '2',
+    task: '납세증명서류 준비',
+    description: '국세 및 지방세 완납증명서(정부24, 방문, 민원우편, 모바일, 무인발급기)',
+    completed: false,
   },
-  { 
-    id: '3', 
-    task: '매장 사진 촬영', 
-    description: '매장전면(간판포함) 2장, 내부사진 3~4장 준비', 
-    completed: false 
+  {
+    id: '3',
+    task: '취약계층 증빙서류',
+    description: '사업자등록증명(간이), 건강보험자격득실확인서, 장애인기업확인서',
+    completed: false,
   },
-  { 
-    id: '4', 
-    task: '취약계층 증빙서류 (해당 시)', 
-    description: '사업자등록증명(간이), 건강보험자격득실확인서, 장애인기업확인서 등 1개', 
-    completed: false 
+  {
+    id: '4',
+    task: '매장 사진 촬영',
+    description: '매장전면(간판포함) 2장, 내부사진 3~4장 준비',
+    completed: false,
   },
-  { 
-    id: '5', 
-    task: '업체소개동기 및 활용계획', 
-    description: '참고자료를 활용하여 미리 작성 및 준비', 
-    completed: false 
+  {
+    id: '5',
+    task: '업체소개동기 및 활용계획',
+    description: '참고자료를 활용하여 미리 작성 및 준비',
+    completed: false,
   },
 ];
 

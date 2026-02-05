@@ -4,6 +4,7 @@ export interface ChecklistItem {
   task: string;
   description: string;
   completed: boolean;
+  linkUrl?: string; // Optional link URL for navigation
 }
 
 export interface ApplicationRecord {

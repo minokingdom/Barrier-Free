@@ -11,9 +11,6 @@ interface ChecklistViewProps {
 }
 
 const ChecklistView: React.FC<ChecklistViewProps> = ({ items, onToggle, onNext }) => {
-  const completedCount = items.filter(i => i.completed).length;
-  const progressPercent = Math.round((completedCount / items.length) * 100);
-
   return (
     <div className="space-y-6">
       {/* Notice Banner */}
@@ -27,65 +24,69 @@ const ChecklistView: React.FC<ChecklistViewProps> = ({ items, onToggle, onNext }
       <div className="bg-white rounded-[2rem] p-6 md:p-12 shadow-2xl shadow-slate-200/50 border border-slate-100">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
-            <h2 className="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">필수 서류 체크리스트</h2>
-            <p className="text-slate-500 mt-2 font-medium">신청 전 아래 서류들이 모두 준비되었는지 확인하세요.</p>
-          </div>
-          <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100 min-w-[180px]">
-            <div className="flex justify-between items-end mb-2">
-              <span className="text-[11px] font-black text-blue-600 uppercase tracking-wider">Progress</span>
-              <span className="text-xl font-black text-slate-800">{progressPercent}%</span>
-            </div>
-            <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-blue-600 transition-all duration-700 ease-out shadow-[0_0_10px_rgba(37,99,235,0.5)]"
-                style={{ width: `${progressPercent}%` }}
-              ></div>
-            </div>
+            <h2 className="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">필수 서류 및 신청</h2>
+            <p className="text-slate-500 mt-2 font-medium">아래 서류를 확인하고 공식 사이트에서 신청을 진행해 주세요.</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 gap-3 mb-12">
-          {items.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => {
-                playClickSound();
-                onToggle(item.id);
-              }}
-              className={`group flex items-center p-5 rounded-2xl border-2 transition-all cursor-pointer ${item.completed
-                ? 'bg-blue-50/30 border-blue-100'
-                : 'bg-white border-slate-100 hover:border-blue-200 hover:shadow-lg'
-                }`}
-            >
-              <div className={`w-7 h-7 rounded-xl flex items-center justify-center mr-5 border-2 transition-all ${item.completed ? 'bg-blue-600 border-blue-600 text-white' : 'border-slate-200 group-hover:border-blue-400'
-                }`}>
-                {item.completed && <i className="fa-solid fa-check text-sm"></i>}
-              </div>
-              <div className="flex-1">
-                <h3 className={`font-black text-base md:text-lg ${item.completed ? 'text-blue-900/40 line-through' : 'text-slate-800'}`}>
-                  {item.task}
-                </h3>
-                <p className={`text-xs md:text-sm font-medium ${item.completed ? 'text-blue-700/30' : 'text-slate-500'}`}>
-                  {item.description}
-                </p>
-              </div>
-            </div>
-          ))}
+          {items.map((item) => {
+            const isLink = !!item.linkUrl;
+            const CardTag = isLink ? 'a' : 'div';
+            const cardProps = isLink ? {
+              href: item.linkUrl,
+              target: "_blank",
+              rel: "noopener noreferrer",
+              onClick: () => playClickSound()
+            } : {};
+
+            return (
+              <CardTag
+                key={item.id}
+                {...cardProps}
+                className={`group flex items-center p-5 rounded-2xl border-2 transition-all no-underline bg-white border-slate-100 ${isLink ? 'hover:border-blue-200 hover:shadow-lg cursor-pointer' : 'cursor-default'}`}
+              >
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-5 border-2 transition-all shrink-0 bg-slate-50 border-slate-200`}>
+                  <span className="text-sm font-black text-slate-400">{item.id}</span>
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-black text-base md:text-lg flex items-center gap-2 text-slate-800">
+                    {item.task}
+                    {isLink && <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors">Link</span>}
+                  </h3>
+                  <p className="text-xs md:text-sm font-medium text-slate-500">
+                    {item.description}
+                  </p>
+                </div>
+              </CardTag>
+            );
+          })}
         </div>
 
-        <button
-          onClick={() => {
-            playClickSound();
-            onNext();
-          }}
-          disabled={completedCount < items.length}
-          className={`w-full py-6 rounded-2xl font-black text-xl transition-all ${completedCount === items.length
-            ? 'bg-blue-700 text-white shadow-2xl shadow-blue-700/30 hover:bg-blue-800 hover:-translate-y-1'
-            : 'bg-slate-100 text-slate-300 cursor-not-allowed'
-            }`}
-        >
-          {completedCount === items.length ? '서류 준비 완료 (다음 단계)' : '모든 서류를 체크해 주세요'}
-        </button>
+        <div className="flex flex-col gap-4">
+          {/* Official Site Button */}
+          <a
+            href="https://www.sbiz.or.kr/smst/index.do"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={playClickSound}
+            className="w-full py-6 rounded-2xl font-black text-xl transition-all bg-blue-700 text-white shadow-2xl shadow-blue-700/30 hover:bg-blue-800 hover:-translate-y-1 flex items-center justify-center gap-3"
+          >
+            <span>스마트상점 공식 신청 사이트 바로가기</span>
+            <i className="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+
+          {/* Next Step Button */}
+          <button
+            onClick={() => {
+              playClickSound();
+              onNext();
+            }}
+            className="w-full py-4 rounded-xl font-bold text-lg text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-all"
+          >
+            다음 단계 (입력) 로 이동 <i className="fa-solid fa-chevron-right ml-1"></i>
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-3xl p-8 shadow-xl border border-slate-100">
