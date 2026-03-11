@@ -53,7 +53,7 @@ const ApplicationEntryView: React.FC<ApplicationEntryViewProps> = ({ isComplete,
 
     if (existingMember) {
       // 2. Member exists, check password
-      if (existingMember.password === formData.salesPassword) {
+      if (String(existingMember.password) === String(formData.salesPassword)) {
         setVerificationStatus('verified');
         setStatusMessage('기존 영업자 확인이 완료되었습니다.');
         setStatusModalOpen(true);
